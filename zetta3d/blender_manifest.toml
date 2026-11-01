@@ -1,0 +1,28 @@
+schema_version = "1.0.0"
+
+id = "zetta3d"
+version = "0.1.0"
+name = "Zetta 3D"
+tagline = "Generate, finish and import 3D models and images with Zetta 3D"
+maintainer = "Zetta 3D <hello@zetta3d.ai>"
+type = "add-on"
+website = "https://zetta3d.ai"
+
+tags = ["3D View", "Import-Export", "Mesh"]
+
+blender_version_min = "4.2.0"
+
+license = ["SPDX:LicenseRef-Zetta3D-Source-Available"]
+copyright = ["2026 Zetta 3D"]
+
+[permissions]
+network = "Generate, process and download your models with zetta3d.ai"
+files = "Save downloaded models and read files you choose to upload"
+clipboard = "Copy links when you ask"
+
+[build]
+paths_exclude_pattern = [
+  "__pycache__/",
+  "*.pyc",
+  ".*",
+]
