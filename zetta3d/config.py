@@ -13,9 +13,9 @@ CLIENT_NAME = "blender"
 PRODUCTION_API = "https://api.zetta3d.ai/api"
 PRODUCTION_SITE = "https://zetta3d.ai"
 
-REPOSITORY_URL = "https://github.com/ig-shadow-walker/Zetta3D---BlenderPlugin"
+REPOSITORY_URL = "https://github.com/ig-shadow-walker/Zetta3D-BlenderPlugin"
 RELEASES_URL = REPOSITORY_URL + "/releases"
-RAW_URL = "https://raw.githubusercontent.com/ig-shadow-walker/Zetta3D---BlenderPlugin/main"
+RAW_URL = "https://raw.githubusercontent.com/ig-shadow-walker/Zetta3D-BlenderPlugin/main"
 
 PRICING_URL = PRODUCTION_SITE + "/pricing"
 

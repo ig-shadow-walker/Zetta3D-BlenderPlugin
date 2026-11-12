@@ -19,7 +19,7 @@ Blender.
 
 **You need:** Blender **4.2 LTS** or newer and a [Zetta 3D](https://zetta3d.ai) account.
 
-1. Download `zetta3d-<version>.zip` from the [latest release](https://github.com/ig-shadow-walker/Zetta3D---BlenderPlugin/releases/latest).
+1. Download `zetta3d-<version>.zip` from the [latest release](https://github.com/ig-shadow-walker/Zetta3D-BlenderPlugin/releases/latest).
    Don't unzip it.
 2. In Blender, open **Edit › Preferences › Get Extensions**, click **⌄** (top right) › **Install from Disk…**, and
    pick the zip.
