@@ -1,4 +1,28 @@
-# Zetta 3D for Blender
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/banner-dark.svg">
+    <img alt="Zetta 3D for Blender — AI 3D models and pictures, right inside Blender. Generate, finish and import 3D models without leaving Blender, and chain the tools into pipelines." src="docs/images/banner-light.svg" width="100%">
+  </picture>
+</p>
+
+<p align="center">
+  <a href="#install"><img alt="Blender 4.2 LTS and newer" src="https://img.shields.io/badge/Blender-4.2%20LTS%20and%20newer-15130F?style=flat-square&logo=blender&logoColor=FAF8F4"></a>
+  <a href="#install"><img alt="Install as a Blender extension" src="https://img.shields.io/badge/install-extension%20%C2%B7%20Install%20from%20Disk-15130F?style=flat-square"></a>
+  <a href="CHANGELOG.md"><img alt="Version 0.1.0" src="https://img.shields.io/badge/version-0.1.0-1677FF?style=flat-square"></a>
+  <a href="#license"><img alt="Source-available" src="https://img.shields.io/badge/license-source--available-55514A?style=flat-square"></a>
+</p>
+
+<p align="center">
+  <a href="#install"><b>Install</b></a> ·
+  <a href="#sign-in"><b>Sign in</b></a> ·
+  <a href="#3d-studio"><b>3D Studio</b></a> ·
+  <a href="#my-generations"><b>My Generations</b></a> ·
+  <a href="#3d-pipelines"><b>Pipelines</b></a> ·
+  <a href="#settings"><b>Settings</b></a> ·
+  <a href="https://zetta3d.ai"><b>zetta3d.ai</b></a>
+</p>
+
+<br>
 
 **Zetta 3D for Blender** puts your [Zetta 3D](https://zetta3d.ai) account inside Blender. Use it to:
 
@@ -12,37 +36,66 @@
 Everything you make is also in your library on zetta3d.ai, and everything you made there (or in Unity) shows up in
 Blender.
 
-> **Coming next: the Zetta Agent** — a full assistant for Blender. Preferences already lets you save your own
-> Gemini, OpenAI, DeepSeek, Claude, GLM or Meta API key for it.
+> [!NOTE]
+> **Coming next: the Zetta Agent** — a full assistant for Blender, on your Zetta account or on your own API key.
+> This release is the Studio: every tool, used directly.
 
 ## Install
 
-**You need:** Blender **4.2 LTS** or newer and a [Zetta 3D](https://zetta3d.ai) account.
+**You need:** Blender **4.2 LTS** or newer and a [Zetta 3D](https://zetta3d.ai) account (free to start).
 
-1. Download `zetta3d-<version>.zip` from the [latest release](https://github.com/ig-shadow-walker/Zetta3D-BlenderPlugin/releases/latest).
-   Don't unzip it.
+1. Download `zetta3d-<version>.zip` from the
+   [latest release](https://github.com/ig-shadow-walker/Zetta3D-BlenderPlugin/releases/latest). Don't unzip it.
 2. In Blender, open **Edit › Preferences › Get Extensions**, click **⌄** (top right) › **Install from Disk…**, and
    pick the zip.
 3. Make sure **Preferences › System › Network › Allow Online Access** is on — the add-on talks to zetta3d.ai.
 
-The add-on lives in the 3D View's sidebar: press **N** and open the **Zetta 3D** tab.
+Then press **N** in the 3D View and open the **Zetta 3D** tab.
 
-**Update.** The add-on checks for a newer release when Blender starts and every 6 hours. When one is out, a line at
-the top of the Zetta 3D tab says so, with **What's new** and **Update** (it downloads the release and installs it over
-this copy; restart Blender to finish). You can also check from **Preferences › Add-ons › Zetta 3D › Check for
-updates**.
+<details>
+<summary><b>Update and remove</b></summary>
 
-**Remove.** Preferences › Add-ons › Zetta 3D › **Uninstall**. Models you imported stay in your files.
+<br>
+
+**Update.** The add-on checks for a newer release when Blender starts and every 6 hours while it stays open. When
+one is out, a line at the top of the Zetta 3D tab says so, with **What's new** and **Update**: it downloads the
+release and installs it over this copy — restart Blender to finish. You can also check any time from
+**Preferences › Add-ons › Zetta 3D › Check for updates**. The [changelog](CHANGELOG.md) lists what each version
+adds.
+
+**Remove.** **Preferences › Add-ons › Zetta 3D › Uninstall**. Models you imported stay in your files.
+
+</details>
+
+<details>
+<summary><b>Install problems</b></summary>
+
+<br>
+
+- **"Online access is turned off in Blender"** in the Zetta 3D tab — turn on **Preferences › System › Network ›
+  Allow Online Access** (the tab has a button that opens it).
+- **No Zetta 3D tab** — press **N** in the 3D View to show the sidebar, and check that **Zetta 3D** is ticked under
+  **Preferences › Add-ons**.
+- **"Install from Disk" is missing** — you are on Blender 4.1 or older. The add-on needs 4.2 LTS or newer.
+
+</details>
 
 ## Sign in
 
-In the Zetta 3D tab, click **Sign in with your browser**, sign in on zetta3d.ai and click **Connect Blender**. Blender
-receives its own session and never sees your password. The session is kept in the add-on's private folder on your
-computer — never in a .blend file, so it never travels with your scenes.
+In the Zetta 3D tab, click **Sign in with your browser**, sign in on zetta3d.ai and click **Connect Blender**. That's
+it — Blender receives its own session and never sees your password. The session is kept in the add-on's private
+folder on your computer, never in a .blend file, so it never travels with your scenes.
+
+Everything lives in the **Zetta 3D** tab of the 3D View's sidebar, as panels: **3D Studio**, **Jobs**, **My
+Generations** and **Pipelines**, under your account and credits.
 
 ## 3D Studio
 
-The **3D Studio** panel holds every tool of the web Studio. Pick one from the menu at its top.
+Every tool from the web Studio, in Blender's sidebar. Pick one from the menu at the top of the panel.
+
+<p align="center">
+  <img alt="Blender's 3D View with the Zetta 3D sidebar open on Generate 3D: a prompt for a pirate treasure chest, Control Mode, and the engine, output and quality settings" src="docs/images/studio.png" width="860">
+</p>
 
 | Tool | What it does |
 |---|---|
@@ -53,108 +106,146 @@ The **3D Studio** panel holds every tool of the web Studio. Pick one from the me
 | **Smart UV** | Lay a model's UVs out again as a clean layout, keeping its textures, rig and animation |
 | **Texture** | Re-texture a model from a description, a reference picture or pictures of each side, up to 8K |
 | **Auto Rig** | Rig humanoids, animals and other creatures — Standard, Mixamo, Unity Humanoid, UE5, VRM or ActorCore bone names; GLB or FBX |
-| **Image Studio** | Generate, edit and compose pictures, save them as Blender images, or send them to Generate 3D |
+| **Image Studio** | Generate, edit and compose pictures; save them as Blender images or send them to Generate 3D |
+
+<img align="right" alt="The Auto Rig tool: the source model, the body and bone-name options, GLB or FBX, the price and the Auto Rig button, with two jobs running below" src="docs/images/rig.png" width="300">
 
 - **Pictures** come from a file, or from any image already in your .blend (the image button next to each picker).
-  Image Editor › **Image › Generate 3D from this image** does the same from there.
+  In the Image Editor, **Image › Generate 3D from this image** does the same.
 - **Control Mode** (on by default) draws a picture from your prompt first and stops, so you can check it — or
   **Redraw** or **AI edit** it — before any 3D credits are spent.
 - **Multi-View**: drop the views you have; **Generate missing views** draws the rest from your reference.
-- **Source model** for the finishing tools: **Pick from library**, or select objects in the 3D View and press
-  **Use selection**. A model imported from Zetta 3D is used directly; anything else is exported as GLB and uploaded to
-  your library first (free). Right-click › **Zetta 3D › …** in the 3D View does the same.
-- **Auto Rig › Detect the body** renders the imported model from four sides and tells you what kind of body it has.
+- **The finishing tools** work on a **source model**: **Pick from library**, or select objects in the 3D View and
+  press **Use selection**. A model imported from Zetta 3D is used directly; anything else is exported as GLB and
+  uploaded to your library first, free. Right-click › **Zetta 3D › …** in the 3D View does the same.
+- **Auto Rig › Detect the body** renders the model from four sides and tells you what kind of body it has.
+- **Every panel shows the price** before you start, and your balance.
 
-Every panel shows the price before you start and your balance. Finished models import into
-`//zetta3d/models/<id>-<name>/` next to your .blend (change it in Preferences) and, with **Place at the 3D cursor**
-on, stand on the ground at the cursor, in their own collection under **Zetta 3D**.
+Finished models import into `//zetta3d/models/<id>-<name>/` next to your .blend (change it in
+[Settings](#settings)) and, with **Place at the 3D cursor** on, stand on the ground at the cursor, in their own
+collection under **Zetta 3D**.
 
 ### Jobs
 
-The **Jobs** panel follows everything you started: queue position, progress, and the import when it lands. Jobs run on
-the server — close Blender and they keep going; the next time you open it they are picked up and imported.
+The **Jobs** panel follows everything you started — queue position, progress, and the import when it lands. Jobs run
+on the server: close Blender and they keep going, and the next time you open it they're picked up and imported.
+
+<br clear="right">
 
 ## My Generations
 
-Everything you've made on Zetta 3D, on the web, in Unity or in Blender, with thumbnails.
+Everything you've made on Zetta 3D — on the web, in Unity or in Blender — with thumbnails.
 
-- **Import**, **Show** (select it in the scene) or **Place** another copy at the 3D cursor; **⋯** for **Import as
+- **Import**, **Show** (select it in the scene) or **Place** another copy at the 3D cursor. **⋯** has **Import as
   child of the active object**, **Send to** a finishing tool, **Fork** a generation's settings back into Generate,
   **Rename**, **Delete**, and the UV layout picture of a Smart UV result.
 - Search, filter by kind and status, page through, and select several to delete together.
-- A pipeline run is one tile: open it to see its models in the order the run made them, with **Import all**, **Delete
-  all** and **Open run**.
+- A pipeline run is one tile: open it to see its models in the order the run made them, with **Import all**,
+  **Delete all** and **Open run**.
 - **Images** shows your 2D library: save a picture into your images folder, use it for 3D, or edit it.
-- **Upload selection to library** sends the selected objects to your library as a GLB (free).
+- **Upload selection to library** sends the selected objects to your library as a GLB, free.
 
-Gaussian splats and worlds made on zetta3d.ai are listed too, but Blender can't import them here; they open on the web.
+Gaussian splats and worlds made on zetta3d.ai are listed too, but Blender can't import them here; they open on the
+web.
 
 ## 3D Pipelines
+
+<img align="right" alt="The Pipelines panel editing a recipe called Game-ready character: Describe it, and the steps Picture seed, Remove background and Generate 3D, with the Generate 3D step's settings open" src="docs/images/pipelines.png" width="300">
 
 Chain the Studio's tools into a reusable recipe — the same pipelines as on
 [zetta3d.ai/pipelines](https://zetta3d.ai/pipelines).
 
-- **Describe it** — *"a game-ready character from a photo, rigged"* — and the recipe is built for you. With a recipe
-  there, describe a change instead (*"add AI texturing at the end"*); **Undo** brings back what was there.
-- Or build it step by step: **Add step** after the selected one (wired up for you), pick each step's **Input from**,
-  and set it up below it. Seeds, Remove background, AI edit, Draw views, Isolate parts, Generate 3D / Smart 3D (and
-  their Multi-view versions), Retopology, Segmentation, AI texturing, Smart UV and Auto rig — every option the web has.
-- The recipe checks itself as you build, shows its price per run, saves as you go, and has undo and redo.
+- **Describe it** — *"a game-ready character from a photo, rigged"* — and the recipe is built for you. With a
+  recipe there, describe a change instead (*"add AI texturing at the end"*); **Undo** brings back what was there.
+- **Or build it step by step**: **Add step after** the selected one (wired up for you), pick each step's **Input
+  from**, and set it up below. Seeds, Remove background, AI edit, Draw views, Isolate parts, Generate 3D and Smart 3D
+  (and their Multi-view versions), Retopology, Segmentation, AI texturing, Smart UV and Auto rig — every option the
+  web has.
+- The recipe **checks itself** as you build, shows its **price per run**, saves as you go, and has undo and redo.
 - **New run…** on up to 20 pictures, models or sets of pictures at once — **Manual** (it waits for you before each
   step) or **Auto** — with **Import results when done**.
-- **Runs** shows each run's steps and results: run waiting steps, choose the parts Isolate parts found, retry a failed
-  step (with new settings if you like), pause, resume or cancel, and import any model a step made. Runs keep going on
-  the server even if Blender is closed.
+- **Runs** shows each run's steps and results: run waiting steps, choose the parts Isolate parts found, retry a
+  failed step (with new settings if you like), pause, resume or cancel, and import any model a step made. Runs keep
+  going on the server even if Blender is closed.
+
+<br clear="right">
 
 ## Settings
 
-**Preferences › Add-ons › Zetta 3D**: your account, what the Zetta Agent will run on and
-[your own API keys](#your-own-api-keys), the models and images folders, placing imports at the 3D cursor, the
-preferred mesh format (GLB or FBX), the version and updates, and (under **Developer**) the server to talk to.
+**Preferences › Add-ons › Zetta 3D**:
+
+| Setting | What it does |
+|---|---|
+| **Account** | Who you're signed in as, your plan and credits; sign in or out |
+| **Models folder** · **Images folder** | Where imports and saved pictures go — `//zetta3d/models` and `//zetta3d/images` (next to your .blend) by default |
+| **Place imported models at the 3D cursor** | Whether **Place at the 3D cursor** starts ticked in the Studio |
+| **Preferred format** | GLB (materials and textures come with it) or FBX (best for rigs), when a result comes in both |
+| **Version** | Your version, and **Check for updates** |
+| **Zetta Agent — what it runs on** | Ready for the coming agent: your Zetta account, or [your own API key](#your-own-api-keys) |
+| **Developer** | The server to talk to — only for developing against your own Zetta 3D server |
 
 ### Your own API keys
 
-Under **Zetta Agent — what it runs on**, choose **Your own API key**, then **Paste a key…** next to a provider. The
-list of providers comes from Zetta 3D, so new ones appear without an update. Each key is checked when you save it.
+The Zetta Agent will be able to run on your own key. You can save one now: under **Zetta Agent — what it runs on**,
+choose **Your own API key**, then **Paste a key…** next to a provider. The list of providers comes from Zetta 3D, so
+new ones appear without an update, and each key is checked when you save it.
 
-- **Your key stays yours.** It is kept in your system's key store — macOS Keychain, Windows Credential Manager or the
+- **Your key stays yours.** It's kept in your system's key store — macOS Keychain, Windows Credential Manager or the
   Linux keyring — never in Blender's preferences or your .blend files.
 - **GLM keys.** Use a **Standard API Key** from Z.ai's API Keys page. A GLM Coding Plan key doesn't work here.
 
 ## Development
 
 ```
-zetta3d/            the extension (what ships)
+zetta3d/            the extension — the only folder that ships
   api/              the Zetta 3D API: routes, request builders, the model catalogue
   core/             HTTP, background tasks, the session, the key store, preferences
   studio/           the 3D Studio tools and Image Studio
-  pipelines/        the recipe graph (pure Python), its routes, and the editor/runs state
+  pipelines/        the recipe graph (pure Python), its routes, and the editor and runs state
   ui/               panels, operators and preferences
+  icons/            the Zetta mark in the sidebar (drawn by tools/make_icons.py)
 tests/              headless checks run inside Blender
-tools/build.sh      builds dist/zetta3d-<version>.zip
+tools/              build.sh (the release zip) and make_icons.py
+docs/               this README's artwork: banners, screenshots, and the scripts that make them
 release/update.json a required minimum version and a message for the update line
 ```
 
-Run the tests (they install the add-on into a throwaway Blender user folder, so your own setup is untouched):
+Run the tests — they install the add-on into a throwaway Blender user folder, so your own setup is untouched:
 
-```
+```bash
 tests/run.sh
 ```
 
-Build the zip:
+Build the zip into `dist/`:
 
-```
+```bash
 tools/build.sh
 ```
 
-**Releasing.** Bump `version` in `zetta3d/blender_manifest.toml` and `VERSION` in `zetta3d/config.py`, add the notes
-to `CHANGELOG.md`, build, and publish a GitHub release tagged `v<version>` with `dist/zetta3d-<version>.zip` attached
-under exactly that name — the in-app **Update** downloads
-`releases/download/v<version>/zetta3d-<version>.zip`. Installed copies learn of a release from `main`'s manifest,
-through the API's `/blender-plugin/version`. To make an update required, set `minimum` in `release/update.json`. To
-correct it without a release, set `BLENDER_PLUGIN_LATEST_VERSION`, `BLENDER_PLUGIN_MIN_VERSION` or
-`BLENDER_PLUGIN_UPDATE_MESSAGE` on the API server.
+Remake the README artwork (`node` for the banners, Blender for the screenshots; macOS):
+
+```bash
+node docs/art/readme-art.mjs && docs/art/screenshots.sh
+```
+
+<details>
+<summary><b>Releasing</b></summary>
+
+<br>
+
+1. Bump `version` in `zetta3d/blender_manifest.toml` and `VERSION` in `zetta3d/config.py`, and add the notes to
+   [CHANGELOG.md](CHANGELOG.md).
+2. Build with `tools/build.sh`.
+3. Publish a GitHub release tagged `v<version>` with `dist/zetta3d-<version>.zip` attached under exactly that name —
+   the in-app **Update** downloads `releases/download/v<version>/zetta3d-<version>.zip`.
+
+Installed copies learn of a release from `main`'s manifest, through the API's `/blender-plugin/version`. To make an
+update required, set `minimum` in `release/update.json`. To correct it without a release, set
+`BLENDER_PLUGIN_LATEST_VERSION`, `BLENDER_PLUGIN_MIN_VERSION` or `BLENDER_PLUGIN_UPDATE_MESSAGE` on the API server.
+
+</details>
 
 ## License
 
-Source-available, not open source — © 2026 Zetta 3D. See [LICENSE.md](LICENSE.md).
+Source-available, not open source — © 2026 Zetta 3D. The source is published so you can install and audit it; it
+may not be copied, modified or redistributed. See [LICENSE.md](LICENSE.md).

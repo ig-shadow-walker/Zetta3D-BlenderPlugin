@@ -1154,10 +1154,10 @@ class ZETTA_OT_menu(bpy.types.Operator):
 def object_menu(self, _context):
     layout = self.layout
     layout.separator()
-    op = layout.operator("zetta.do", text="Upload to Zetta 3D library", icon="EXPORT")
+    op = layout.operator("zetta.do", text="Upload to Zetta 3D library", icon_value=pictures.mark())
     op.action = "upload_selection"
     for tool, _ in library.send_to_options({"selectedFeature": "upload", "status": "success"}):
-        op = layout.operator("zetta.do", text=f"Zetta 3D › {tools.TITLES[tool]}", icon="MODIFIER")
+        op = layout.operator("zetta.do", text=f"Zetta 3D › {tools.TITLES[tool]}", icon_value=pictures.mark())
         op.action, op.arg = "source_selection_tool", tool
 
 
@@ -1173,7 +1173,7 @@ def image_menu(self, context):
         return
     layout = self.layout
     layout.separator()
-    op = layout.operator("zetta.do", text="Generate 3D from this image (Zetta 3D)", icon="MESH_MONKEY")
+    op = layout.operator("zetta.do", text="Generate 3D from this image (Zetta 3D)", icon_value=pictures.mark())
     op.action, op.arg = "image_to_3d", image.name
 
 

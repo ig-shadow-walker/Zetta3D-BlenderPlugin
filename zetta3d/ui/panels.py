@@ -3,6 +3,7 @@
 import json
 import textwrap
 
+import blf
 import bpy
 
 from .. import auth, config, importer, jobs, library, updates
@@ -25,16 +26,45 @@ def btn(layout, action, text="", icon="NONE", arg="", arg2="", confirm="", hint=
 
 
 def wrap(layout, text, icon="NONE", alert=False, width=None):
-    """A paragraph: Blender labels don't wrap, so the text is cut into lines that fit the sidebar."""
+    """A paragraph: Blender labels don't wrap, so the text is cut into lines that fit the sidebar.
+
+    `width` is a line length in characters; without it the lines are measured in the UI font against the
+    region, so they fit at any UI scale and display density.
+    """
     if not text:
         return
-    region = getattr(bpy.context, "region", None)
-    scale = bpy.context.preferences.view.ui_scale if bpy.context.preferences else 1.0
-    chars = width or max(24, int(((region.width if region else 300) - 40) / (6.5 * scale)))
+    lines = textwrap.wrap(text, width) if width else _measured_lines(text, icon != "NONE")
     col = layout.column(align=True)
     col.alert = alert
-    for index, line in enumerate(textwrap.wrap(text, chars) or [""]):
+    for index, line in enumerate(lines or [""]):
         col.label(text=line, icon=icon if index == 0 else "BLANK1" if icon != "NONE" else "NONE")
+
+
+def _measured_lines(text, with_icon, region_width=None):
+    region = getattr(bpy.context, "region", None)
+    prefs = bpy.context.preferences
+    # Everything in a region is drawn at the system scale: the UI scale times the display's pixel size.
+    scale = prefs.system.ui_scale if prefs else 1.0
+    if region_width is None:
+        region_width = region.width if region else 300
+    # The sidebar's strip of tabs (inside the region's width), the panel's margins, the box a paragraph usually
+    # sits in, and the icon on its first line (blank on the rest).
+    room = region_width - (84 + (22 if with_icon else 0)) * scale
+    try:
+        blf.size(0, prefs.ui_styles[0].widget.points * scale)
+        fits = lambda line: blf.dimensions(0, line)[0] <= room  # noqa: E731
+    except Exception:  # noqa: BLE001 — no font to measure with: fall back to an average character width
+        chars = max(20, int(room / (7 * scale)))
+        return textwrap.wrap(text, chars)
+    lines, line = [], ""
+    for word in text.split():
+        candidate = f"{line} {word}" if line else word
+        if line and not fits(candidate):
+            lines.append(line)
+            line = word
+        else:
+            line = candidate
+    return lines + [line] if line else lines
 
 
 def text_prop(layout, data, name, placeholder, **kwargs):
@@ -86,6 +116,9 @@ class ZETTA_PT_main(bpy.types.Panel):
     bl_category = CATEGORY
     bl_label = "Zetta 3D"
     bl_idname = "ZETTA_PT_main"
+
+    def draw_header(self, _context):
+        self.layout.label(icon_value=pictures.mark())
 
     def draw(self, context):
         layout = self.layout
@@ -746,9 +779,10 @@ class ZETTA_PT_jobs(bpy.types.Panel):
     def poll(cls, _context):
         return bool(jobs.all_jobs())
 
-    def draw_header(self, _context):
+    def draw_header_preset(self, _context):
+        # On the header's right, after its title: draw_header would put it in front ("· 2 running  Jobs").
         running = len(jobs.running())
-        self.layout.label(text=f"· {running} running" if running else f"· {len(jobs.all_jobs())}")
+        self.layout.label(text=f"{running} running" if running else f"{len(jobs.all_jobs())}")
 
     def draw(self, context):
         layout = self.layout

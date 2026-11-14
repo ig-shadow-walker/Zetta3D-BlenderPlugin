@@ -90,6 +90,24 @@ def has_icon(key):
     return _previews is not None and key in _previews
 
 
+def mark():
+    """The Zetta mark's icon id, in the tone that reads on the current theme (tools/make_icons.py draws them).
+
+    A custom icon is drawn as it is, not tinted like Blender's own, so it follows the theme's text instead: light
+    text means a dark theme, which gets the light mark.
+    """
+    try:
+        text = bpy.context.preferences.themes[0].user_interface.wcol_regular.text
+        tone = "paper" if (0.2126 * text[0] + 0.7152 * text[1] + 0.0722 * text[2]) > 0.5 else "ink"
+    except (AttributeError, IndexError, TypeError):
+        tone = "paper"
+    path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "icons", f"zetta-mark-{tone}.png")
+    try:
+        return icon_for_file(f"zetta-mark-{tone}", path)
+    except (RuntimeError, KeyError):
+        return 0
+
+
 def unregister():
     global _previews
     if _previews is not None:

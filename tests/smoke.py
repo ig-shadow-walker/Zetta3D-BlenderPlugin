@@ -267,6 +267,8 @@ def draw_all(label):
     zetta.tool = "texture"
     panels.ZETTA_PT_studio.draw(panel, bpy.context)
     panels.ZETTA_PT_jobs.draw(panel, bpy.context)
+    panels.ZETTA_PT_jobs.draw_header_preset(panel, bpy.context)
+    panels.ZETTA_PT_main.draw_header(panel, bpy.context)
     for kind in ("models", "images"):
         zetta.lib_kind = kind
         panels.ZETTA_PT_library.draw(panel, bpy.context)
@@ -409,6 +411,23 @@ def test_icons():
     enum_icons = {item[3] for item in props.TOOLS}
     assert not (enum_icons - ICONS), enum_icons - ICONS
     assert not bad_icons, sorted(bad_icons)
+    # The mark in the sidebar's header and the menus: shipped in the zip in both tones, and loadable. (Background
+    # Blender gives every preview the icon id 0; the screenshots in docs/ show it drawn.)
+    assert isinstance(pictures.mark(), int)
+    folder = os.path.join(os.path.dirname(pictures.__file__), "..", "icons")
+    for tone in ("paper", "ink"):
+        preview = pictures._collection().load(f"test-{tone}", os.path.join(folder, f"zetta-mark-{tone}.png"), "IMAGE")
+        assert tuple(preview.image_size) == (64, 64), (tone, tuple(preview.image_size))
+
+
+def test_wrap_measures_text():
+    """Paragraphs are cut by the width of the text in the UI font, so none runs past the sidebar and ends in …"""
+    text = "Control Mode: a picture is drawn from your prompt first, so you can check it before any 3D credits are spent."
+    narrow = panels._measured_lines(text, with_icon=True, region_width=280)
+    wide = panels._measured_lines(text, with_icon=True, region_width=560)
+    for lines in (narrow, wide):
+        assert " ".join(lines) == text, lines
+    assert len(narrow) > len(wide) >= 1, (narrow, wide)
 
 
 def test_sign_in_handshake():
