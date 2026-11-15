@@ -11,7 +11,11 @@ from .core import http, tasks
 from .pipelines import state as pipelines
 from .studio import context as studio
 from .studio import generate, pictures
-from .ui import ops, panels, preferences
+from .ui import agent_panel, ops, panels, preferences
+from .agent import changes as agent_changes
+from .agent import errors as agent_errors
+from .agent import runtime as agent
+from .agent import tools as agent_tools
 
 
 def _apply_plan_defaults():
@@ -58,6 +62,12 @@ def register():
     studio.on_loaded(_apply_plan_defaults)
     updates.register()
     pipelines.register()
+    agent_tools.load_all()
+    agent_tools.register()
+    agent_panel.register()
+    agent_errors.register()
+    agent_changes.register()
+    agent.register()
     bpy.app.handlers.load_post.append(_load_post)
     bpy.app.timers.register(_start, first_interval=0.2)
 
@@ -70,6 +80,11 @@ def unregister():
         bpy.app.handlers.load_post.remove(_load_post)
     if bpy.app.timers.is_registered(_start):
         bpy.app.timers.unregister(_start)
+    agent.unregister()
+    agent_tools.unregister()
+    agent_changes.unregister()
+    agent_errors.unregister()
+    agent_panel.unregister()
     pipelines.flush()
     pipelines.unregister()
     updates.unregister()

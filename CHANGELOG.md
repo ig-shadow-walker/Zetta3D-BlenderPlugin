@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+### Added
+- **The Zetta Agent** — an assistant in the 3D View's sidebar (Zetta Agent tab) that works in the open .blend with
+  Blender's own tools: objects and collections, any property, modifiers and constraints, mesh clean-up and UVs,
+  materials and node trees (shader, world, compositor, Geometry Nodes), keyframes, imports and exports, texts and
+  Python, renders — and every Zetta 3D tool, with a price card before anything that spends credits. It looks at
+  its own work (viewport captures and preview renders), checks your Blender version's Python API before it writes,
+  and opens the right panel when you ask where something is.
+- **You stay in charge of it**: every change is a named undo step, a changes card per message (Keep all / Undo
+  all), Ask first or Full autonomy, a card before deleting, running Python or opening files, a copy of the file
+  before risky steps (Restore the file as it was), and Stop.
+- **Python the agent writes is guarded**: shown to you first, and code that would run programs, go online, delete
+  files, load native code, change preferences or add-ons, or build code from strings is refused.
+- **@ to tag** objects and data-blocks, **Add to Zetta Agent** in the 3D View and Outliner menus (⇧⌘M /
+  Ctrl+Shift+M), attachments (a viewport picture, pictures, PDFs, text and other files), **Write more…** for long
+  messages, Ask mode, History and Memory per .blend file.
+- **Runs on your Zetta account or your own API key** (Gemini, OpenAI, DeepSeek, Claude, GLM, Meta).
+- Preferences › **Keep a copy before risky steps**.
+
 ## [0.1.0]
 
 The first release: everything the Unity plugin does, in Blender, except the agent.

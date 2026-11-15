@@ -31,7 +31,7 @@ export BLENDER_USER_RESOURCES="$work/user"
   "import bpy; v = bpy.context.preferences.view; v.show_splash = False; v.ui_scale = 1.25; bpy.ops.wm.save_userpref()" >/dev/null 2>&1
 
 mkdir -p docs/images
-for shot in "${@:-studio rig pipelines}"; do
+for shot in "${@:-studio rig pipelines agent agent_card}"; do
   for name in $shot; do
     raw="$work/$name.png"
     log="$work/$name.log"

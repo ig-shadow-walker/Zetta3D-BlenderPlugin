@@ -40,7 +40,10 @@ OPEN = {
     "studio": {"ZETTA_PT_main", "ZETTA_PT_studio", "ZETTA_PT_jobs"},
     "rig": {"ZETTA_PT_main", "ZETTA_PT_studio", "ZETTA_PT_jobs"},
     "pipelines": {"ZETTA_PT_main", "ZETTA_PT_pipelines"},
+    "agent": {"ZETTA_PT_main"},
+    "agent_card": {"ZETTA_PT_main"},
 }[SHOT]
+TAB = "Zetta Agent" if SHOT.startswith("agent") else "Zetta 3D"
 for cls in (panels.ZETTA_PT_main, panels.ZETTA_PT_studio, panels.ZETTA_PT_jobs, panels.ZETTA_PT_library,
             panels.ZETTA_PT_pipelines):
     bpy.utils.unregister_class(cls)
@@ -48,6 +51,12 @@ for cls in (panels.ZETTA_PT_main, panels.ZETTA_PT_studio, panels.ZETTA_PT_jobs, 
 for cls in (panels.ZETTA_PT_main, panels.ZETTA_PT_studio, panels.ZETTA_PT_jobs, panels.ZETTA_PT_library,
             panels.ZETTA_PT_pipelines):
     bpy.utils.register_class(cls)
+
+# The tab clicker ends on the lowest tab, and tabs stack in registration order: the agent's goes last for its shots.
+if TAB == "Zetta Agent":
+    agent_ui = module("ui.agent_panel")
+    bpy.utils.unregister_class(agent_ui.ZETTA_PT_agent)
+    bpy.utils.register_class(agent_ui.ZETTA_PT_agent)
 
 
 def guarded(fn):
@@ -123,6 +132,48 @@ def pipeline():
     bpy.context.window_manager.zetta.pipe_view = "recipe"
 
 
+def conversation():
+    """A finished exchange with the agent — and, for agent_card, the card it stops on before running Python."""
+    runtime = module("agent.runtime")
+    agent_changes = module("agent.changes")
+    tools = module("agent.tools")
+    runtime.options.update(loaded=True, loading=False, error=None, providers=[],
+                           tiers=[{"key": "auto", "label": "Auto", "available": True}],
+                           thinking=[{"key": "auto", "label": "Auto", "available": True}])
+    monkey = bpy.data.objects.get("Suzanne")
+    if monkey is not None:
+        monkey.name = "Statue"
+    rows = [
+        {"role": "user", "text": "Give the statue a soft bevel and a polished bronze look", "mentions": ["Statue"]},
+        {"role": "step", "name": "inspect", "toolUseId": "a", "status": "done", "label": "Inspected Statue"},
+        {"role": "step", "name": "add_modifier", "toolUseId": "b", "status": "done", "label": "Added Bevel to Statue"},
+        {"role": "step", "name": "create_material", "toolUseId": "c", "status": "done",
+         "label": "Made material Bronze"},
+        {"role": "step", "name": "capture_view", "toolUseId": "d", "status": "done", "label": "Captured the view"},
+        {"role": "assistant", "text": "Done — the statue has a 2 mm Bevel (3 segments) and a new **Bronze** "
+                                      "material: metallic 1.0, roughness 0.25, a warm base colour.\n\n"
+                                      "Switch the viewport to Material Preview (Z › 2) to see it. Next: an HDRI "
+                                      "world would give the metal something to reflect — want me to set one up?"},
+    ]
+    for row in rows:
+        runtime._add(row)
+    turn = agent_changes.begin_turn("bronze statue")
+    for label in ("Added Bevel to Statue", "Made material Bronze"):
+        agent_changes.scene_step(label)
+    if SHOT == "agent_card":
+        runtime._add({"role": "user", "text": "Scatter 40 rocks around it, random sizes"})
+        runtime._add({"role": "step", "name": "run_python", "toolUseId": "e", "status": "running",
+                      "label": "Run python"})
+        runtime._open_card("approve", {
+            "title": "Run Python: scatter 40 rocks around the statue",
+            "summary": "import random\nrocks = bpy.data.collections.new(\"Rocks\")\n"
+                       "bpy.context.scene.collection.children.link(rocks)\nfor i in range(40):\n"
+                       "    angle = random.uniform(0, 6.283)\n    ...",
+            "reasons": [], "copy": True, "copy_ticked": True, "copy_note": None, "button": "Allow"},
+            lambda _answer: None)
+        tools.Result  # noqa: B018 — imported for the card's tool, nothing to run
+
+
 def sidebar():
     window = bpy.context.window_manager.windows[0]
     for area in window.screen.areas:
@@ -165,7 +216,7 @@ def zetta_tab(window, area):
     x = region.x + region.width - 10
     top = region.y + region.height
     for offset in range(40, region.height, 12):
-        if region.active_panel_category == "Zetta 3D":
+        if region.active_panel_category == TAB:
             return
         click(window, x, top - offset)
 
@@ -176,6 +227,8 @@ def start():
     account()
     if SHOT == "pipelines":
         pipeline()
+    if SHOT.startswith("agent"):
+        conversation()
     window, area = sidebar()
     bpy.app.timers.register(lambda: widen(window, area), first_interval=0.6)
     bpy.app.timers.register(lambda: zetta_tab(window, area), first_interval=1.2)

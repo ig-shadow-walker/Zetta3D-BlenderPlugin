@@ -392,6 +392,58 @@ def test_draw_signed_in():
     panels.draw_runs(FakeLayout(), zetta)
 
 
+def test_draw_agent():
+    """The Zetta Agent's chat, in every state it can be in: each kind of row, each card, History and Memory."""
+    fake_account()
+    agent = importlib.import_module(PACKAGE + ".agent.runtime")
+    agent_ui = importlib.import_module(PACKAGE + ".ui.agent_panel")
+    agent_changes = importlib.import_module(PACKAGE + ".agent.changes")
+    agent.options.update(loaded=True, loading=False, error=None, providers=[],
+                         tiers=[{"key": "auto", "label": "Auto", "available": True}],
+                         thinking=[{"key": "auto", "label": "Auto", "available": True}])
+    agent.new_chat()
+    for item in (
+        {"role": "user", "text": "bevel the chair", "mentions": ["Chair"], "attachments": ["attached:ref.png"]},
+        {"role": "assistant", "text": "# Plan\n- add a **Bevel**\n```\nbpy.ops.x()\n```\nDone."},
+        {"role": "step", "name": "add_modifier", "toolUseId": "t1", "status": "done", "label": "Added Bevel",
+         "detail": "Added Bevel to Chair.", "input": {"target": "Chair"}},
+        {"role": "step", "name": "capture_view", "toolUseId": "t2", "status": "running", "label": "Capture view"},
+        {"role": "question", "text": "Which next?", "options": [{"label": "Texture it"}, {"label": "Rig it"}]},
+        {"role": "picture", "path": "/nonexistent.png"},
+        {"role": "error", "text": "Your key was refused.", "code": "provider_key_invalid"},
+        {"role": "memory", "text": "Renders in Cycles", "action": "saved"},
+        {"role": "note", "text": "Stopped."},
+    ):
+        agent._add(item)
+    agent_ui.ui["open"].add(agent.items()[2]["id"])
+    turn = agent_changes.begin_turn("bevel the chair")
+    agent_changes.scene_step("Added Bevel")
+    turn["copy"] = "/tmp/x.blend"
+    wm = bpy.context.window_manager
+    fake = FakeLayout()
+    panel = type("P", (), {"layout": fake})()
+    for view in ("chat", "history", "memory"):
+        wm.zetta_agent.view = view
+        agent_ui.ZETTA_PT_agent.draw(panel, bpy.context)
+    wm.zetta_agent.view = "chat"
+    for kind, payload in (
+        ("approve", {"title": "Run Python: scatter rocks", "summary": "import bpy\nprint(1)", "reasons": ["Big"],
+                     "copy": True, "copy_ticked": True, "copy_note": None, "button": "Allow"}),
+        ("generate", {"title": "Generate a helmet", "lines": ["Zetta N2.5 · Textured"], "credits": 48,
+                      "button": "Generate"}),
+        ("ask_user", {"title": "Pick", "questions": [
+            {"id": "a", "question": "Which?", "kind": "object"},
+            {"id": "b", "question": "Finish?", "kind": "choice", "options": [{"label": "Glass"}, {"label": "Matte"}]},
+            {"id": "c", "question": "Notes?", "kind": "text"}]}),
+    ):
+        agent._open_card(kind, payload, lambda _answer: None)
+        agent_ui.ZETTA_PT_agent.draw(panel, bpy.context)
+        agent.card = None
+    agent_ui.ZETTA_PT_agent.draw_header(panel, bpy.context)
+    agent.new_chat()
+    print(f"       agent: {fake.calls} layout calls")
+
+
 def test_preferences_draw():
     prefs = bpy.context.preferences.addons[PACKAGE].preferences
     prefs.agent_account = "own"

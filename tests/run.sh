@@ -4,6 +4,7 @@
 # touched) and runs tests/smoke.py headless.
 #
 #   tests/run.sh                       # uses /Applications/Blender.app on macOS, or `blender` on PATH
+#   tests/run.sh tests/agent_scene.py  # another check script, the same way
 #   BLENDER=/path/to/blender tests/run.sh
 set -euo pipefail
 
@@ -25,4 +26,4 @@ export BLENDER_USER_RESOURCES="$work/user"
 zip="$(ls "$work"/zetta3d-*.zip)"
 "$BLENDER" --command extension install-file -r user_default -e "$zip" >/dev/null
 "$BLENDER" --background --online-mode --addons bl_ext.user_default.zetta3d \
-  --python tests/smoke.py 2>&1 | grep -v "^Read\|^Blender quit\|^$"
+  --python "${1:-tests/smoke.py}" 2>&1 | grep -v "^Read\|^Blender quit\|^$"

@@ -5,6 +5,7 @@ add-on's own folder while the file is unsaved. Each import lands in its own coll
 top objects tagged with the generation's id (`zetta_id`) so the library can say which models are already here.
 """
 
+import contextlib
 import os
 import re
 import tempfile
@@ -151,8 +152,11 @@ def download_uv_layout(gen, folder=None, progress=None):
     return path
 
 
-def import_generation(gen, place=True, location=None, job=None, done=None, fail=None, parent=None):
-    """Downloads the generation's mesh(es) and imports them. done(objects) / fail(message) on the main thread."""
+def import_generation(gen, place=True, location=None, job=None, done=None, fail=None, parent=None, around=None):
+    """Downloads the generation's mesh(es) and imports them. done(objects) / fail(message) on the main thread.
+
+    around: a context manager the main-thread import runs inside — the Zetta Agent passes its changes record's
+    `running`, so the import counts as the agent's change, not the user's."""
     gen_id = int(gen["id"])
     if gen_id in importing and importing[gen_id].get("error") is None:
         return  # already on its way
@@ -216,7 +220,8 @@ def import_generation(gen, place=True, location=None, job=None, done=None, fail=
     def downloaded(result):
         paths, uv_path = result
         try:
-            objects = import_files(paths, gen, place=place, location=location, parent=parent)
+            with around() if around else contextlib.nullcontext():
+                objects = import_files(paths, gen, place=place, location=location, parent=parent)
         except Exception as error:  # noqa: BLE001 — the importer's own errors are the user's to see
             _failed(gen_id, job, fail, f"Finished, but the import failed: {error}")
             return

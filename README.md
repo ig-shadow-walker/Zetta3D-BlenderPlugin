@@ -18,6 +18,7 @@
   <a href="#3d-studio"><b>3D Studio</b></a> ·
   <a href="#my-generations"><b>My Generations</b></a> ·
   <a href="#3d-pipelines"><b>Pipelines</b></a> ·
+  <a href="#the-zetta-agent"><b>Agent</b></a> ·
   <a href="#settings"><b>Settings</b></a> ·
   <a href="https://zetta3d.ai"><b>zetta3d.ai</b></a>
 </p>
@@ -31,14 +32,13 @@
 - **make pictures** — textures, references, concept art — and turn any of them into a model;
 - **bring them into your scene** in one click: downloaded, imported into its own collection, and standing on the
   ground at the 3D cursor;
-- **chain the tools into pipelines** that run over many pictures or models at once.
+- **chain the tools into pipelines** that run over many pictures or models at once;
+- **work with the Zetta Agent**, an assistant that models, shades, lights, animates and scripts in your open file
+  with Blender's own tools, looks at the result to check it, makes the art it needs, and teaches you Blender as it
+  goes — on your Zetta account or on [your own API key](#your-own-api-keys).
 
 Everything you make is also in your library on zetta3d.ai, and everything you made there (or in Unity) shows up in
 Blender.
-
-> [!NOTE]
-> **Coming next: the Zetta Agent** — a full assistant for Blender, on your Zetta account or on your own API key.
-> This release is the Studio: every tool, used directly.
 
 ## Install
 
@@ -170,6 +170,68 @@ Chain the Studio's tools into a reusable recipe — the same pipelines as on
 
 <br clear="right">
 
+## The Zetta Agent
+
+<img align="right" alt="The Zetta Agent tab after a request: the user asked for a soft bevel and a bronze look; the agent inspected the statue, added a Bevel, made a Bronze material and looked at the result, then lists what it changed with Keep all and Undo all" src="docs/images/agent.png" width="300">
+
+The **Zetta Agent** tab in the 3D View's sidebar is an assistant that works in your open .blend. Tell it what you
+want in plain words — *"give the statue a soft bevel and a polished bronze look"*, *"light this for a product
+shot"*, *"why is my render black?"*, *"how do I UV unwrap this?"* — and it does the work with Blender's own tools,
+one visible step at a time, then looks at the result.
+
+**What it understands.** With every message it gets a picture of where you are: your Blender version, the file,
+the mode, what you have selected, recent Python errors and an outline of the scene. It reads further wherever the
+task needs it — any object's properties, modifier stacks, node trees, texts — and it checks Blender's own Python
+API for your version before it writes a property it isn't sure of.
+
+**What it can do:**
+
+| Area | What it does |
+|---|---|
+| **Objects and scenes** | Adds, moves, renames, parents and organises objects and collections; selects; switches modes |
+| **Any property** | Sets any property by its data path — modifiers, lights, cameras, render settings — checked against what it takes |
+| **Modelling** | Modifiers and constraints; applies, joins, separates, smooths, cleans up meshes, unwraps UVs |
+| **Shading** | Makes Principled materials with textures wired the right way; edits shader, world, compositor and Geometry Nodes trees |
+| **Animation** | Keys any property over time |
+| **Looking** | Captures the viewport (as you see it, or from around an object) and renders previews to check its work |
+| **Files** | Imports and exports models, writes scripts and texts, appends and links from other .blend files, saves |
+| **Python** | Runs a script for what no other tool does — you see the code first |
+| **Zetta 3D** | Generates and finishes 3D models, makes and edits pictures, builds and runs pipelines — with a card showing the price |
+| **Showing you** | Frames objects, switches views and shading, and opens the right panel when you ask where something is |
+
+**You stay in charge:**
+
+- **Every change is undoable.** Each step is named on Blender's undo stack ("Zetta Agent: Added Bevel to Statue"),
+  and the card under a reply lists what the message changed, with **Keep all** and **Undo all**.
+- **Ask first** (the default) shows a card before anything risky — deleting, running Python, opening another file
+  — and every credit-spending tool always shows its price first. **Full autonomy** lets it carry a request through
+  without stopping.
+- **A copy before risky steps.** Before the agent runs Python, deletes, applies or imports, it can keep a copy of
+  the file — you tick or untick it on the card, and Preferences decides when there is no card. **Restore the file
+  as it was** brings it back, even when undo can't.
+- **Python is guarded.** Code the agent writes is shown to you first, and the add-on refuses code that would run
+  programs, go online, delete files, load native code, change your preferences or add-ons, or build code from
+  strings — whatever the autonomy. Blender has no sandbox, so this is a guard, not a cage: read the code on the
+  card before you allow it.
+- **Stop** ends whatever it's doing, straight away.
+
+<img align="right" alt="The card the agent stops on before running Python: the code to scatter rocks, Keep a copy of the file first ticked, and Allow or Decline" src="docs/images/agent_card.png" width="300">
+
+**Point it at things.** Type **@** (the first button under the message box) to tag an object, material,
+collection, node group, image or text; right-click › **Add to Zetta Agent** in the 3D View or the Outliner, or
+**⇧⌘M / Ctrl+Shift+M**, tags what's selected. Attach a **picture of the viewport**, a picture file or a PDF, a
+text file (it's read in), or any other file (copied next to your .blend for the agent to import). For a long
+message, **Write more…** opens it in a Text Editor window with **Send to Zetta Agent** in its header.
+
+**Ask mode** explains and shows — it reads your file and opens the right panels, but changes nothing. Switch to
+**Agent** to have it done.
+
+**Memory.** The agent keeps a brief for each .blend file (what it's for, its structure, key decisions) and notes
+about your preferences, and uses them in every conversation. **Memory** shows and deletes them; **History** has
+your past conversations in this file.
+
+<br clear="right">
+
 ## Settings
 
 **Preferences › Add-ons › Zetta 3D**:
@@ -181,14 +243,19 @@ Chain the Studio's tools into a reusable recipe — the same pipelines as on
 | **Place imported models at the 3D cursor** | Whether **Place at the 3D cursor** starts ticked in the Studio |
 | **Preferred format** | GLB (materials and textures come with it) or FBX (best for rigs), when a result comes in both |
 | **Version** | Your version, and **Check for updates** |
-| **Zetta Agent — what it runs on** | Ready for the coming agent: your Zetta account, or [your own API key](#your-own-api-keys) |
+| **Zetta Agent — what it runs on** | Your Zetta account, or [your own API key](#your-own-api-keys) |
+| **Keep a copy before risky steps** | Whether the agent keeps a copy of the file before running Python, deleting, applying or importing, when it doesn't ask first (files up to 200 MB; 3 kept per file, for a week) |
 | **Developer** | The server to talk to — only for developing against your own Zetta 3D server |
 
 ### Your own API keys
 
-The Zetta Agent will be able to run on your own key. You can save one now: under **Zetta Agent — what it runs on**,
-choose **Your own API key**, then **Paste a key…** next to a provider. The list of providers comes from Zetta 3D, so
-new ones appear without an update, and each key is checked when you save it.
+Run the agent on your own key, on any plan: under **Zetta Agent — what it runs on**, choose **Your own API key**,
+then **Paste a key…** next to a provider — Gemini, OpenAI, DeepSeek, Claude, GLM or Meta. The list comes from
+Zetta 3D, so new providers appear without an update, and each key is checked when you save it. The menus at the top
+of the Zetta Agent tab then pick the provider and its model.
+
+- **Billing.** What the agent uses on your key is billed by that provider, not in Zetta credits. Making 3D models
+  and pictures still uses Zetta credits.
 
 - **Your key stays yours.** It's kept in your system's key store — macOS Keychain, Windows Credential Manager or the
   Linux keyring — never in Blender's preferences or your .blend files.
@@ -198,6 +265,7 @@ new ones appear without an update, and each key is checked when you save it.
 
 ```
 zetta3d/            the extension — the only folder that ships
+  agent/            the Zetta Agent: the conversation, its tools in Blender, undo and copies, the Python guard
   api/              the Zetta 3D API: routes, request builders, the model catalogue
   core/             HTTP, background tasks, the session, the key store, preferences
   studio/           the 3D Studio tools and Image Studio
@@ -214,6 +282,12 @@ Run the tests — they install the add-on into a throwaway Blender user folder, 
 
 ```bash
 tests/run.sh
+```
+
+The agent's checks are one script each (`tests/agent_*.py`), run the same way:
+
+```bash
+for t in foundation read scene files zetta runtime; do tests/run.sh "tests/agent_$t.py"; done
 ```
 
 Build the zip into `dist/`:

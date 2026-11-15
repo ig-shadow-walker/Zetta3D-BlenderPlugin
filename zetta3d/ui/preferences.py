@@ -57,6 +57,11 @@ class ZettaPreferences(bpy.types.AddonPreferences):
     site_base: StringProperty(name="Website", default="", update=_connection_changed,
                               description=f"Empty = production ({config.PRODUCTION_SITE})")
     show_developer: BoolProperty(name="Developer", default=False)
+    agent_keep_copies: BoolProperty(
+        name="Keep a copy before risky steps", default=True,
+        description="Before the Zetta Agent runs Python, deletes, applies or imports, save a copy of the file "
+                    "(files up to 200 MB; 3 kept per file, a week at most) so it can be restored. When the agent "
+                    "asks first, you decide on its card")
 
     def draw(self, context):
         layout = self.layout
@@ -67,9 +72,9 @@ class ZettaPreferences(bpy.types.AddonPreferences):
 
         box = layout.box()
         box.label(text="Zetta Agent — what it runs on", icon="OUTLINER_DATA_LIGHTPROBE")
-        panels.wrap(box, "The Zetta Agent arrives in an upcoming version of the add-on. Keys you save here are kept "
-                         "ready for it.", "INFO", width=100)
+        panels.wrap(box, "The Zetta Agent is in the 3D View's sidebar, in the Zetta Agent tab.", "INFO", width=100)
         box.row().prop(self, "agent_account", expand=True)
+        box.prop(self, "agent_keep_copies")
         if self.agent_account == providers.OWN:
             draw_own_keys(box)
 
