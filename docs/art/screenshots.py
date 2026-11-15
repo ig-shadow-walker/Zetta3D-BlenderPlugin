@@ -40,8 +40,10 @@ OPEN = {
     "studio": {"ZETTA_PT_main", "ZETTA_PT_studio", "ZETTA_PT_jobs"},
     "rig": {"ZETTA_PT_main", "ZETTA_PT_studio", "ZETTA_PT_jobs"},
     "pipelines": {"ZETTA_PT_main", "ZETTA_PT_pipelines"},
+    "pipeline_nodes": {"ZETTA_PT_main", "ZETTA_PT_pipelines"},
     "agent": {"ZETTA_PT_main"},
     "agent_card": {"ZETTA_PT_main"},
+    "agent_tag": {"ZETTA_PT_main"},
 }[SHOT]
 TAB = "Zetta Agent" if SHOT.startswith("agent") else "Zetta 3D"
 for cls in (panels.ZETTA_PT_main, panels.ZETTA_PT_studio, panels.ZETTA_PT_jobs, panels.ZETTA_PT_library,
@@ -55,8 +57,10 @@ for cls in (panels.ZETTA_PT_main, panels.ZETTA_PT_studio, panels.ZETTA_PT_jobs, 
 # The tab clicker ends on the lowest tab, and tabs stack in registration order: the agent's goes last for its shots.
 if TAB == "Zetta Agent":
     agent_ui = module("ui.agent_panel")
-    bpy.utils.unregister_class(agent_ui.ZETTA_PT_agent)
-    bpy.utils.register_class(agent_ui.ZETTA_PT_agent)
+    chat_host = module("ui.chat.host")
+    for cls in (agent_ui.ZETTA_PT_agent, chat_host.ZETTA_PT_agent_chat):
+        bpy.utils.unregister_class(cls)
+        bpy.utils.register_class(cls)
 
 
 def guarded(fn):
@@ -126,6 +130,8 @@ def pipeline():
     g, step = graph.add_step(g, "retopology", after=gen)
     g, step = graph.add_step(g, "texture", after=step)
     g, step = graph.add_step(g, "rigging", after=step)
+    if SHOT == "pipeline_nodes":  # a branch, so the canvas shows a graph rather than a line
+        g, step = graph.add_step(g, "smart_uv", after=gen)
     pipes.editor.update(pipeline={"id": 9, "title": "Game-ready character"}, graph=g, selected=gen)
     pipes.listing.update(items=[{"id": 9, "title": "Game-ready character"}], loaded=True)
     bpy.context.window_manager.zetta.pipe_title = "Game-ready character"
@@ -133,7 +139,8 @@ def pipeline():
 
 
 def conversation():
-    """A finished exchange with the agent — and, for agent_card, the card it stops on before running Python."""
+    """A finished exchange with the agent — and, for agent_card, the card it stops on before running Python; for
+    agent_tag, a message being typed with the @ list open."""
     runtime = module("agent.runtime")
     agent_changes = module("agent.changes")
     tools = module("agent.tools")
@@ -160,6 +167,10 @@ def conversation():
     turn = agent_changes.begin_turn("bronze statue")
     for label in ("Added Bevel to Statue", "Made material Bronze"):
         agent_changes.scene_step(label)
+    if SHOT == "agent_tag":  # typing a message, with the @ list open
+        chat = module("ui.chat.view")
+        chat.box.set_text("Now put a soft area light above @st")  # focused just before the shot (repaint)
+        bpy.context.window_manager.zetta_agent.input = chat.box.text
     if SHOT == "agent_card":
         runtime._add({"role": "user", "text": "Scatter 40 rocks around it, random sizes"})
         runtime._add({"role": "step", "name": "run_python", "toolUseId": "e", "status": "running",
@@ -225,14 +236,40 @@ def zetta_tab(window, area):
 def start():
     scene()
     account()
-    if SHOT == "pipelines":
+    if SHOT.startswith("pipeline"):
         pipeline()
     if SHOT.startswith("agent"):
         conversation()
     window, area = sidebar()
+    if SHOT == "pipeline_nodes":  # the 3D View becomes the pipeline's node editor
+        nodes = module("ui.pipeline_nodes")
+        nodes.refresh()
+        nodes.show_in(area, nodes.get_tree())
+        bpy.app.timers.register(lambda: frame_nodes(window, area), first_interval=1.0)
+        bpy.app.timers.register(lambda: repaint(window), first_interval=2.4)
+        bpy.app.timers.register(lambda: shoot(window, area), first_interval=3.0)
+        return
     bpy.app.timers.register(lambda: widen(window, area), first_interval=0.6)
     bpy.app.timers.register(lambda: zetta_tab(window, area), first_interval=1.2)
+    bpy.app.timers.register(lambda: repaint(window), first_interval=2.4)
     bpy.app.timers.register(lambda: shoot(window, area), first_interval=3.0)
+
+
+@guarded
+def frame_nodes(window, area):
+    region = next(r for r in area.regions if r.type == "WINDOW")
+    with bpy.context.temp_override(window=window, area=area, region=region):
+        bpy.ops.node.view_all()
+
+
+@guarded
+def repaint(window):
+    """Draws the window now: a Blender window that is not in front may not repaint by itself, and the shot is
+    taken of what was last drawn."""
+    if SHOT == "agent_tag":  # after the tab clicks, which take the keyboard away from the message box
+        module("ui.chat.view").state["focus"] = True
+    with bpy.context.temp_override(window=window):
+        bpy.ops.wm.redraw_timer(type="DRAW_WIN_SWAP", iterations=2)
 
 
 @guarded

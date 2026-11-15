@@ -1,7 +1,7 @@
 """Where the add-on talks to, and what it calls itself.
 
-Production by default; a developer can point it at a local backend from
-Preferences › Add-ons › Zetta 3D › Developer without touching code.
+ALWAYS PRODUCTION: https://api.zetta3d.ai (every route is under /api) and https://zetta3d.ai for sign-in. There
+is no setting, switch or variable for it — the addresses below are the only ones the add-on uses.
 """
 
 VERSION = "0.1.0"
@@ -20,19 +20,12 @@ RAW_URL = "https://raw.githubusercontent.com/ig-shadow-walker/Zetta3D-BlenderPlu
 PRICING_URL = PRODUCTION_SITE + "/pricing"
 
 
-def _trim(value, fallback):
-    value = (value or "").strip().rstrip("/")
-    return value or fallback
-
-
 def api_base():
-    from .core import prefs
-    return _trim(prefs.get("api_base", ""), PRODUCTION_API)
+    return PRODUCTION_API
 
 
 def site_base():
-    from .core import prefs
-    return _trim(prefs.get("site_base", ""), PRODUCTION_SITE)
+    return PRODUCTION_SITE
 
 
 def is_production():

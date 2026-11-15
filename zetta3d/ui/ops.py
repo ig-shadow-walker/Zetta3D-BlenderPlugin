@@ -144,16 +144,6 @@ def _update_notes(_context, *_):
     updates.open_notes()
 
 
-@action("reset_connection")
-def _reset_connection(context, *_):
-    from ..core import prefs
-
-    p = prefs.addon_prefs()
-    if p is not None:
-        p.api_base = ""
-        p.site_base = ""
-
-
 @action("provider_remove")
 def _provider_remove(_context, provider, *_):
     providers.remove_key(provider)

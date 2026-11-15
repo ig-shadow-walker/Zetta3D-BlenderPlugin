@@ -3,7 +3,7 @@ schema_version = "1.0.0"
 id = "zetta3d"
 version = "0.1.0"
 name = "Zetta 3D"
-tagline = "Generate, finish and import 3D models and images with Zetta 3D"
+tagline = "AI 3D models, pictures, pipelines and an agent inside Blender"
 maintainer = "Zetta 3D <hello@zetta3d.ai>"
 type = "add-on"
 website = "https://zetta3d.ai"
@@ -17,8 +17,8 @@ copyright = ["2026 Zetta 3D"]
 
 [permissions]
 network = "Generate, process and download your models with zetta3d.ai"
-files = "Save downloaded models and read files you choose to upload"
-clipboard = "Copy links when you ask"
+files = "Save models and pictures, read files you attach or upload"
+clipboard = "Copy and paste in the agent chat, and copy links"
 
 [build]
 paths_exclude_pattern = [

@@ -12,6 +12,8 @@ from .pipelines import state as pipelines
 from .studio import context as studio
 from .studio import generate, pictures
 from .ui import agent_panel, ops, panels, preferences
+from .ui import chat as agent_chat
+from .ui import pipeline_nodes
 from .agent import changes as agent_changes
 from .agent import errors as agent_errors
 from .agent import runtime as agent
@@ -62,9 +64,11 @@ def register():
     studio.on_loaded(_apply_plan_defaults)
     updates.register()
     pipelines.register()
+    pipeline_nodes.register()
     agent_tools.load_all()
     agent_tools.register()
     agent_panel.register()
+    agent_chat.register()
     agent_errors.register()
     agent_changes.register()
     agent.register()
@@ -84,8 +88,10 @@ def unregister():
     agent_tools.unregister()
     agent_changes.unregister()
     agent_errors.unregister()
+    agent_chat.unregister()
     agent_panel.unregister()
     pipelines.flush()
+    pipeline_nodes.unregister()
     pipelines.unregister()
     updates.unregister()
     jobs.stop()

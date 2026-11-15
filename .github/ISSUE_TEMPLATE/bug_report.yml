@@ -1,0 +1,52 @@
+name: Bug report
+description: Something in the add-on doesn't work as it should.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting it. For your account, credits or a generation, use [zetta3d.ai support](https://zetta3d.ai/support) instead; for a security problem, see [SECURITY.md](https://github.com/ig-shadow-walker/Zetta3D-BlenderPlugin/blob/main/SECURITY.md).
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the Zetta 3D tab
+        2. …
+    validations:
+      required: true
+  - type: input
+    id: addon
+    attributes:
+      label: Add-on version
+      description: Preferences › Add-ons › Zetta 3D
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: blender
+    attributes:
+      label: Blender version
+      placeholder: "5.2.2"
+    validations:
+      required: true
+  - type: dropdown
+    id: system
+    attributes:
+      label: System
+      options: ["macOS", "Windows", "Linux"]
+    validations:
+      required: true
+  - type: textarea
+    id: console
+    attributes:
+      label: Error message
+      description: From the Zetta 3D tab, Blender's info bar or its console. Leave out anything private.
+      render: text

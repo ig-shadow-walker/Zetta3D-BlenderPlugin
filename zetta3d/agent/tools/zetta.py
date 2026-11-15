@@ -338,7 +338,7 @@ def generate_3d_model(args, ctx):
 
             return zc.later(ctx, work, started)
 
-        return zc.confirm(ctx, f"Generate 3D: {options.title}", lines, price, "Generate", approved)
+        return zc.confirm(ctx, f"Generate 3D: {options.title}", lines, price, "Generate", approved, alternative=True)
 
     return zc.later(ctx, check, then)
 

@@ -1,6 +1,10 @@
 """The Zetta Agent's chat: the 3D View sidebar's Zetta Agent tab (BlenderAgent.md §2.1, decision D1).
 
-DRAWN WITH BLENDER'S OWN UI. Labels, boxes and buttons — no custom drawing — so it looks and behaves like
+By default the tab shows the drawn chat (`ui/chat`), which keeps its tabs and message box in place and reacts to
+"@" as you type; this module holds the conversation's state and actions it uses. Preferences › Classic agent
+panel shows the panel below instead.
+
+THE CLASSIC PANEL IS DRAWN WITH BLENDER'S OWN UI. Labels, boxes and buttons — no custom drawing — so it looks and behaves like
 Blender at every scale and theme. What that costs is planned for: text is wrapped by measuring it (panels.wrap)
 and every message has Copy (labels can't be selected); a long message is written in a Text Editor window
 (Write more…); pictures are preview icons.
@@ -86,7 +90,8 @@ class ZETTA_PG_agent(bpy.types.PropertyGroup):
     ], default="agent")
     approval: EnumProperty(name="Autonomy", items=[
         ("confirm_destructive", "Ask first", "Asks before deleting, running Python, opening files or spending credits"),
-        ("auto", "Full autonomy", "Never stops to ask: every call runs, credit cards included"),
+        ("auto", "Full autonomy", "Never stops to ask: every call runs, credits too — except generating a 3D "
+                                  "model, which always asks first"),
     ], default="confirm_destructive")
     tier: EnumProperty(name="Model", items=_tier_items)
     thinking: EnumProperty(name="Thinking", items=_thinking_items)
@@ -98,6 +103,11 @@ class ZETTA_PG_agent(bpy.types.PropertyGroup):
 
 def state(context=None):
     return (context or bpy.context).window_manager.zetta_agent
+
+
+def classic_panel():
+    """True when Preferences ask for this panel as it was: Blender's own widgets instead of the drawn chat."""
+    return bool(prefs.get("agent_classic_panel", False))
 
 
 # ─── Actions (zetta.do) ──────────────────────────────────────────────────────────────────────────
@@ -202,7 +212,7 @@ def _card(_context, verdict, *_):
     if card["kind"] == "approve":
         runtime.answer_card({"allow": verdict == "allow", "copy": bool(ui.get("copy"))})
     elif card["kind"] == "generate":
-        runtime.answer_card(verdict == "allow")
+        runtime.answer_card("blender" if verdict == "blender" else verdict == "allow")
     elif card["kind"] == "ask_user":
         runtime.answer_card({"skipped": True} if verdict == "skip" else dict(ui["answers"]))
     ui["answers"], ui["copy"] = {}, None
@@ -373,7 +383,10 @@ class ZETTA_OT_agent_attach(bpy.types.Operator):
         context.window_manager.fileselect_add(self)
         return {"RUNNING_MODAL"}
 
-    def execute(self, _context):
+    def execute(self, context):
+        if not self.filepath:  # run without invoke (a menu's default): ask for the file first
+            context.window_manager.fileselect_add(self)
+            return {"RUNNING_MODAL"}
         try:
             kind, entry = runtime.attachment_from_file(self.filepath)
         except (OSError, ValueError) as error:
@@ -584,6 +597,9 @@ def _draw_card(layout, item):
         row = box.row(align=True)
         row.scale_y = 1.2
         btn(row, "agent_card", payload.get("button") or "Generate", "PLAY", arg="allow")
+        if payload.get("alternative") == "blender":
+            btn(row, "agent_card", "Build in Blender", "BLENDER", arg="blender",
+                hint="Don't spend credits: the agent models it with Blender's own tools")
         btn(row, "agent_card", "Not now", "CANCEL", arg="decline")
     elif kind == "ask_user":
         for question in payload.get("questions") or []:
@@ -735,6 +751,10 @@ class ZETTA_PT_agent(bpy.types.Panel):
     bl_category = CATEGORY
     bl_label = "Zetta Agent"
     bl_idname = "ZETTA_PT_agent"
+
+    @classmethod
+    def poll(cls, _context):
+        return classic_panel()  # otherwise the tab is the drawn chat's (chat/host.py)
 
     def draw_header(self, _context):
         self.layout.label(icon_value=pictures.mark())

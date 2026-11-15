@@ -422,6 +422,11 @@ def test_draw_agent():
     wm = bpy.context.window_manager
     fake = FakeLayout()
     panel = type("P", (), {"layout": fake})()
+    # By default the panel only hosts the drawn chat (tests/agent_chat.py checks the chat itself) …
+    agent_ui.ZETTA_PT_agent.draw(panel, bpy.context)
+    # … and with Preferences › Classic agent panel it is drawn with Blender's widgets, as below.
+    prefs = bpy.context.preferences.addons[PACKAGE].preferences
+    prefs.agent_classic_panel = True
     for view in ("chat", "history", "memory"):
         wm.zetta_agent.view = view
         agent_ui.ZETTA_PT_agent.draw(panel, bpy.context)
@@ -440,6 +445,7 @@ def test_draw_agent():
         agent_ui.ZETTA_PT_agent.draw(panel, bpy.context)
         agent.card = None
     agent_ui.ZETTA_PT_agent.draw_header(panel, bpy.context)
+    prefs.agent_classic_panel = False
     agent.new_chat()
     print(f"       agent: {fake.calls} layout calls")
 
@@ -447,7 +453,6 @@ def test_draw_agent():
 def test_preferences_draw():
     prefs = bpy.context.preferences.addons[PACKAGE].preferences
     prefs.agent_account = "own"
-    prefs.show_developer = True
     fake = FakeLayout()
 
     class Wrapper:

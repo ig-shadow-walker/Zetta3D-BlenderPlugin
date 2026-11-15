@@ -44,7 +44,7 @@ def _measured_lines(text, with_icon, region_width=None):
     region = getattr(bpy.context, "region", None)
     prefs = bpy.context.preferences
     # Everything in a region is drawn at the system scale: the UI scale times the display's pixel size.
-    scale = prefs.system.ui_scale if prefs else 1.0
+    scale = (prefs.system.ui_scale if prefs else 1.0) or 1.0  # 0 in some background sessions
     if region_width is None:
         region_width = region.width if region else 300
     # The sidebar's strip of tabs (inside the region's width), the panel's margins, the box a paragraph usually
@@ -1188,6 +1188,9 @@ def draw_pipeline_editor(layout, zetta):
     btn(row, "pipeline_close", "Pipelines", "BACK")
     btn(row, "open_site", "", "URL", arg=f"/pipelines?pipeline={pipeline['id']}", hint="Open on zetta3d.ai")
     layout.prop(zetta, "pipe_title", text="")
+    row = layout.row()
+    row.scale_y = 1.3
+    row.operator("zetta.pipeline_nodes", text="Edit as nodes", icon="NODETREE")
     row = layout.row(align=True)
     row.prop(zetta, "pipe_view", expand=True)
     live = sum(1 for r in pipes.runs["items"] if r.get("status") in pipes.LIVE)

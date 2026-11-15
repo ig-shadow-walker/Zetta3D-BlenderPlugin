@@ -150,14 +150,24 @@ web.
 
 ## 3D Pipelines
 
-<img align="right" alt="The Pipelines panel editing a recipe called Game-ready character: Describe it, and the steps Picture seed, Remove background and Generate 3D, with the Generate 3D step's settings open" src="docs/images/pipelines.png" width="300">
+<img align="right" alt="The Pipelines panel editing a recipe called Game-ready character: Edit as nodes, Describe it, and the steps Picture seed, Remove background and Generate 3D, with the Generate 3D step's settings open" src="docs/images/pipelines.png" width="300">
 
 Chain the Studio's tools into a reusable recipe — the same pipelines as on
 [zetta3d.ai/pipelines](https://zetta3d.ai/pipelines).
 
+![A pipeline in Blender's Node Editor: Picture seed, Remove background and Generate 3D, which feeds Retopology, AI texturing and Auto rig, and Smart UV on a second branch; each node shows what it is set to and costs, and the editor's sidebar has Describe it, the price per run, New run and the selected step's settings](docs/images/pipeline_nodes.png)
+
+- **Edit it as nodes.** **Edit as nodes** opens the pipeline in Blender's Node Editor (it's also in the editor
+  type menu as **Zetta 3D Pipeline**). Each step is a node, wired left to right, with its ports coloured by what
+  they carry: a picture, pictures of each side, a model. **Shift+A** adds a step, dragging between ports wires
+  them, **X** deletes and **Shift+D** duplicates with the same settings. **Ctrl+Z** undoes the pipeline's last
+  change. A wire that carries the wrong thing is refused with the reason. Each node shows what it's set to, what it
+  costs and what still needs doing. The selected step's settings, **Describe it**, **New run…** and **Runs** are
+  in the editor's sidebar (**N › Pipeline**). Open a run there and the canvas shows it, each step coloured by how
+  far it got.
 - **Describe it** — *"a game-ready character from a photo, rigged"* — and the recipe is built for you. With a
   recipe there, describe a change instead (*"add AI texturing at the end"*); **Undo** brings back what was there.
-- **Or build it step by step**: **Add step after** the selected one (wired up for you), pick each step's **Input
+- **Or build it step by step** in the sidebar: **Add step after** the selected one (wired up for you), pick each step's **Input
   from**, and set it up below. Seeds, Remove background, AI edit, Draw views, Isolate parts, Generate 3D and Smart 3D
   (and their Multi-view versions), Retopology, Segmentation, AI texturing, Smart UV and Auto rig — every option the
   web has.
@@ -172,12 +182,16 @@ Chain the Studio's tools into a reusable recipe — the same pipelines as on
 
 ## The Zetta Agent
 
-<img align="right" alt="The Zetta Agent tab after a request: the user asked for a soft bevel and a bronze look; the agent inspected the statue, added a Bevel, made a Bronze material and looked at the result, then lists what it changed with Keep all and Undo all" src="docs/images/agent.png" width="300">
+<img align="right" alt="The Zetta Agent tab after a request: Chat, History and Memory at the top; the user asked for a soft bevel and a bronze look; the agent's four steps folded into one line, its reply, and the two changes it made with Keep and Undo; the message box at the bottom" src="docs/images/agent.png" width="300">
 
 The **Zetta Agent** tab in the 3D View's sidebar is an assistant that works in your open .blend. Tell it what you
 want in plain words — *"give the statue a soft bevel and a polished bronze look"*, *"light this for a product
 shot"*, *"why is my render black?"*, *"how do I UV unwrap this?"* — and it does the work with Blender's own tools,
 one visible step at a time, then looks at the result.
+
+**Chat**, **History** and **Memory** stay at the top of the tab and the message box at the bottom, while the
+conversation scrolls between them. **Enter** sends and **Shift+Enter** starts a new line. Under the box you choose
+**Agent** or **Ask**, and **▾** sets the model, how hard it thinks, and whether it asks first.
 
 **What it understands.** With every message it gets a picture of where you are: your Blender version, the file,
 the mode, what you have selected, recent Python errors and an outline of the scene. It reads further wherever the
@@ -196,16 +210,17 @@ API for your version before it writes a property it isn't sure of.
 | **Looking** | Captures the viewport (as you see it, or from around an object) and renders previews to check its work |
 | **Files** | Imports and exports models, writes scripts and texts, appends and links from other .blend files, saves |
 | **Python** | Runs a script for what no other tool does — you see the code first |
-| **Zetta 3D** | Generates and finishes 3D models, makes and edits pictures, builds and runs pipelines — with a card showing the price |
+| **Zetta 3D** | Generates and finishes 3D models, makes and edits pictures, builds and runs pipelines — with a card showing the price, where **Build in Blender** has the agent model it with Blender's own tools instead, for no credits |
 | **Showing you** | Frames objects, switches views and shading, and opens the right panel when you ask where something is |
 
 **You stay in charge:**
 
 - **Every change is undoable.** Each step is named on Blender's undo stack ("Zetta Agent: Added Bevel to Statue"),
-  and the card under a reply lists what the message changed, with **Keep all** and **Undo all**.
+  and the line under a reply says what the message changed, with **Keep** and **Undo** (open it to see the list).
 - **Ask first** (the default) shows a card before anything risky — deleting, running Python, opening another file
   — and every credit-spending tool always shows its price first. **Full autonomy** lets it carry a request through
-  without stopping.
+  without stopping, except that generating a 3D model always shows its card, so you decide before credits are
+  spent on it.
 - **A copy before risky steps.** Before the agent runs Python, deletes, applies or imports, it can keep a copy of
   the file — you tick or untick it on the card, and Preferences decides when there is no card. **Restore the file
   as it was** brings it back, even when undo can't.
@@ -215,13 +230,17 @@ API for your version before it writes a property it isn't sure of.
   card before you allow it.
 - **Stop** ends whatever it's doing, straight away.
 
-<img align="right" alt="The card the agent stops on before running Python: the code to scatter rocks, Keep a copy of the file first ticked, and Allow or Decline" src="docs/images/agent_card.png" width="300">
+<img align="right" alt="The card the agent stops on before running Python: the code to scatter rocks, Keep a copy of the file first ticked, and Allow or Decline; above the message box, a bar says the agent is waiting for your OK" src="docs/images/agent_card.png" width="300">
 
-**Point it at things.** Type **@** (the first button under the message box) to tag an object, material,
-collection, node group, image or text; right-click › **Add to Zetta Agent** in the 3D View or the Outliner, or
-**⇧⌘M / Ctrl+Shift+M**, tags what's selected. Attach a **picture of the viewport**, a picture file or a PDF, a
-text file (it's read in), or any other file (copied next to your .blend for the agent to import). For a long
-message, **Write more…** opens it in a Text Editor window with **Send to Zetta Agent** in its header.
+**Point it at things.** Type **@** in the message box and a list of the file's objects, materials, collections,
+node groups, images and texts opens as you type. Pick one with the arrow keys and **Enter**, or click it (the
+**@** button under the box starts the same list). Right-click › **Add to Zetta Agent** in the 3D View or the
+Outliner, or **⇧⌘M / Ctrl+Shift+M**, tags what's selected. **+** under the box attaches a **picture of the
+viewport**, a picture file or a PDF, a text file (it's read in), or any other file (copied next to your .blend for
+the agent to import). For a long message, **Write a long message…** opens it in a Text Editor window with **Send to
+Zetta Agent** in its header.
+
+<img align="right" alt="Typing a message with @st: a list above the message box offers Statue (a mesh) and Dots Stroke (a material)" src="docs/images/agent_tag.png" width="300">
 
 **Ask mode** explains and shows — it reads your file and opens the right panels, but changes nothing. Switch to
 **Agent** to have it done.
@@ -244,8 +263,8 @@ your past conversations in this file.
 | **Preferred format** | GLB (materials and textures come with it) or FBX (best for rigs), when a result comes in both |
 | **Version** | Your version, and **Check for updates** |
 | **Zetta Agent — what it runs on** | Your Zetta account, or [your own API key](#your-own-api-keys) |
+| **Classic agent panel** | Shows the Zetta Agent with Blender's own buttons and fields: no fixed tabs or message box, and @ picks from a list instead of reacting as you type |
 | **Keep a copy before risky steps** | Whether the agent keeps a copy of the file before running Python, deleting, applying or importing, when it doesn't ask first (files up to 200 MB; 3 kept per file, for a week) |
-| **Developer** | The server to talk to — only for developing against your own Zetta 3D server |
 
 ### Your own API keys
 
@@ -287,8 +306,11 @@ tests/run.sh
 The agent's checks are one script each (`tests/agent_*.py`), run the same way:
 
 ```bash
-for t in foundation read scene files zetta runtime; do tests/run.sh "tests/agent_$t.py"; done
+for t in foundation read scene files zetta runtime chat; do tests/run.sh "tests/agent_$t.py"; done
+tests/run.sh tests/pipeline_nodes.py
 ```
+
+The add-on always talks to zetta3d.ai (`https://api.zetta3d.ai/api`); there is no setting for it.
 
 Build the zip into `dist/`:
 
@@ -318,6 +340,21 @@ update required, set `minimum` in `release/update.json`. To correct it without a
 `BLENDER_PLUGIN_LATEST_VERSION`, `BLENDER_PLUGIN_MIN_VERSION` or `BLENDER_PLUGIN_UPDATE_MESSAGE` on the API server.
 
 </details>
+
+## Privacy
+
+You sign in on zetta3d.ai in your browser; Blender never sees your password, and the session stays in the add-on's
+own folder, never in a .blend. Your own API keys stay in your system's key store. The add-on connects only to
+zetta3d.ai, and to GitHub for updates. The Zetta Agent sends what you write and attach with a summary of your open
+file, and its file tools only reach your .blend's folder. [SECURITY.md](SECURITY.md#what-the-add-on-does-with-your-data)
+has the details.
+
+## Help and feedback
+
+- **Your account, credits or a generation**: [zetta3d.ai support](https://zetta3d.ai/support).
+- **A bug or an idea for the add-on**: [open an issue](https://github.com/ig-shadow-walker/Zetta3D-BlenderPlugin/issues/new/choose)
+  — [CONTRIBUTING.md](CONTRIBUTING.md) says what helps.
+- **A security problem**: privately, as [SECURITY.md](SECURITY.md) explains.
 
 ## License
 

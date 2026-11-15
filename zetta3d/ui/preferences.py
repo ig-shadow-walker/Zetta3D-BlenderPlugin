@@ -1,5 +1,5 @@
 """Preferences › Add-ons › Zetta 3D: account, what the agent runs on (and your own API keys), where models and
-pictures go, the connection, and the version."""
+pictures go, and the version. The server is not a setting: it is always zetta3d.ai (config.py)."""
 
 import bpy
 from bpy.props import BoolProperty, EnumProperty, StringProperty
@@ -10,16 +10,10 @@ from ..core.prefs import PACKAGE
 from . import panels
 
 
-def _connection_changed(self, _context):
-    from .. import library
-    from ..pipelines import state as pipes
-    from ..studio import context as studio
+def _redraw():
+    from ..core import tasks
 
-    studio.reset()
-    library.reset()
-    pipes.reset()
-    if auth.current != auth.SIGNED_OUT:
-        auth.sign_out("The server changed. Sign in again.")
+    tasks.redraw()
 
 
 def _place_changed(self, context):
@@ -52,16 +46,16 @@ class ZettaPreferences(bpy.types.AddonPreferences):
                ("fbx", "FBX", "Best for rigs going on to other tools")],
         default="glb",
         description="When a result has both, this format is imported")
-    api_base: StringProperty(name="API", default="", update=_connection_changed,
-                             description=f"Empty = production ({config.PRODUCTION_API})")
-    site_base: StringProperty(name="Website", default="", update=_connection_changed,
-                              description=f"Empty = production ({config.PRODUCTION_SITE})")
-    show_developer: BoolProperty(name="Developer", default=False)
     agent_keep_copies: BoolProperty(
         name="Keep a copy before risky steps", default=True,
         description="Before the Zetta Agent runs Python, deletes, applies or imports, save a copy of the file "
                     "(files up to 200 MB; 3 kept per file, a week at most) so it can be restored. When the agent "
                     "asks first, you decide on its card")
+
+    agent_classic_panel: BoolProperty(
+        name="Classic agent panel", default=False, update=lambda _self, _context: _redraw(),
+        description="Show the Zetta Agent with Blender's own buttons and fields: no fixed "
+                    "tabs or message box, and @ tags are picked from a list instead of typed")
 
     def draw(self, context):
         layout = self.layout
@@ -75,6 +69,7 @@ class ZettaPreferences(bpy.types.AddonPreferences):
         panels.wrap(box, "The Zetta Agent is in the 3D View's sidebar, in the Zetta Agent tab.", "INFO", width=100)
         box.row().prop(self, "agent_account", expand=True)
         box.prop(self, "agent_keep_copies")
+        box.prop(self, "agent_classic_panel")
         if self.agent_account == providers.OWN:
             draw_own_keys(box)
 
@@ -99,15 +94,9 @@ class ZettaPreferences(bpy.types.AddonPreferences):
         if updates.problem:
             panels.wrap(box, updates.problem, "ERROR", alert=True, width=100)
 
-        box = layout.box()
-        box.prop(self, "show_developer", icon="TRIA_DOWN" if self.show_developer else "TRIA_RIGHT", emboss=False)
-        if self.show_developer:
-            box.label(text="Only change these if you are developing against your own Zetta 3D server.")
-            box.prop(self, "api_base")
-            box.prop(self, "site_base")
-            box.label(text="Connected to production." if config.is_production() else f"Using {config.api_base()}")
-            if not config.is_production():
-                panels.btn(box, "reset_connection", "Reset to production", "LOOP_BACK")
+        if not config.is_production():  # never in a release: a build made for a local backend says so
+            box = layout.box()
+            box.label(text=f"Development build — server: {config.api_base()}", icon="ERROR")
 
 
 def draw_own_keys(layout):

@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 .DS_Store
 dist/
+# Private scripts that stay on one computer (tools/dev-build.local.sh)
+*.local.sh

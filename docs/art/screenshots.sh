@@ -31,7 +31,7 @@ export BLENDER_USER_RESOURCES="$work/user"
   "import bpy; v = bpy.context.preferences.view; v.show_splash = False; v.ui_scale = 1.25; bpy.ops.wm.save_userpref()" >/dev/null 2>&1
 
 mkdir -p docs/images
-for shot in "${@:-studio rig pipelines agent agent_card}"; do
+for shot in "${@:-studio rig pipelines pipeline_nodes agent agent_card agent_tag}"; do
   for name in $shot; do
     raw="$work/$name.png"
     log="$work/$name.log"
@@ -45,7 +45,7 @@ for shot in "${@:-studio rig pipelines agent agent_card}"; do
     grep "^ZETTA_SHOT" "$log" || true
     [ -f "$raw" ] || { tail -30 "$log" >&2; echo "no screenshot for $name" >&2; exit 1; }
     # The studio shot keeps the viewport beside the sidebar; the others are the sidebar alone.
-    if [ "$name" = studio ]; then
+    if [ "$name" = studio ] || [ "$name" = pipeline_nodes ]; then
       cp "$raw" "docs/images/$name.png"
     else
       read -r x w h < <(sed -n 's/^ZETTA_SHOT .* sidebar_x=\([0-9]*\) sidebar_w=\([0-9]*\) area=[0-9]*x\([0-9]*\).*/\1 \2 \3/p' "$log")

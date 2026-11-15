@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Account, credits or a generation
+    url: https://zetta3d.ai/support
+    about: Questions about your Zetta 3D account and what it made are answered on zetta3d.ai.
+  - name: Report a security problem
+    url: https://github.com/ig-shadow-walker/Zetta3D-BlenderPlugin/security/advisories/new
+    about: Privately, please — not as a public issue.

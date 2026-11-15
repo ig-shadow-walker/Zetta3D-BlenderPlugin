@@ -31,6 +31,10 @@ from .tools import LATER, Result, ToolError, push_undo
 
 SPLAT_REFUSAL = "Gaussian splats are not supported in Blender here — open it on zetta3d.ai."
 DECLINED = "The user declined."
+BUILD_IN_BLENDER = ("Not generated: the user chose Build in Blender. Model it yourself with Blender's own tools — "
+                    "primitives, modifiers, mesh edits, Geometry Nodes or run_python for procedural shapes, then "
+                    "materials — in clear steps, and capture_view to check it as you go. Don't propose "
+                    "generate_3d_model for it again unless they ask.")
 
 # ─── Calls that finish later ─────────────────────────────────────────────────────────────────────
 
@@ -92,17 +96,25 @@ def approved(answer):
     return answer is True or (isinstance(answer, dict) and bool(answer.get("allow") or answer.get("approved")))
 
 
-def confirm(ctx, title, lines, credits, button, then):
-    """The credit card ("generate"): then() runs on approval; a decline finishes with "The user declined."."""
+def confirm(ctx, title, lines, credits, button, then, alternative=False):
+    """The credit card ("generate"): then() runs on approval; a decline finishes with "The user declined.".
+
+    alternative: the card also offers Build in Blender (making a 3D model), which finishes with BUILD_IN_BLENDER —
+    the agent then models it itself. Such a card is always shown, in full autonomy too (runtime._tool_card)."""
 
     def answered(answer):
+        if alternative and answer == "blender":
+            if not ctx.finished:
+                ctx.finish(Result(BUILD_IN_BLENDER, label="Build in Blender instead"))
+            return
         if not approved(answer):
             if not ctx.finished:
                 ctx.finish(Result(DECLINED, error=True))
             return
         settle(ctx, then)
 
-    payload = {"title": title[:120], "lines": [line for line in lines if line], "credits": credits, "button": button}
+    payload = {"title": title[:120], "lines": [line for line in lines if line], "credits": credits, "button": button,
+               "alternative": "blender" if alternative else None, "always_ask": bool(alternative)}
     ctx.card("generate", payload, answered)
     return LATER
 

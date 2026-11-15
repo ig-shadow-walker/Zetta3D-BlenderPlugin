@@ -440,8 +440,10 @@ def _open_card(kind, payload, answer, call=None):
 
 
 def _tool_card(kind, payload, on_answer):
-    """A card a tool asks for (credits for a generation, ask_user). Full autonomy approves credit cards."""
-    if kind == "generate" and _props().approval == "auto":
+    """A card a tool asks for (credits for a generation, ask_user). Full autonomy approves credit cards — except
+    a 3D model generation (payload "always_ask"), which the user always answers: paying for a model from their
+    picture or description is their call, whatever the autonomy."""
+    if kind == "generate" and _props().approval == "auto" and not payload.get("always_ask"):
         credits = payload.get("credits")
         _add({"role": "note", "text": f"Approved automatically · {payload.get('title', '')}"
                                       + (f" · {credits} credits" if credits else "")})

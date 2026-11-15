@@ -1,0 +1,15 @@
+name: Feature idea
+description: Something you'd like the add-on to do.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: want
+    attributes:
+      label: What would you like to do?
+      description: The task, in your own words — and what you do today instead.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it matters to you
